@@ -1,0 +1,108 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Preprocessing:
+```{r}
+df <- read_csv(file = "Provisional_COVID-19_Death_Counts_by_Sex__Age__and_State.csv")
+
+
+head(df)
+```
+
+
+
+```{r}
+glimpse(df)
+```
+transformation of variables
+```{r}
+df <- df %>%
+  mutate(
+    `Data as of` = as.Date(`Data as of`, tryFormats = c("%m/%d/%Y")),
+    `Start Date` = as.Date(`Start Date`, tryFormats = c("%m/%d/%Y")),
+    `End Date` = as.Date(`End Date`, tryFormats = c("%m/%d/%Y")),
+    `COVID-19 Deaths` = as.integer(`COVID-19 Deaths`),
+    `Total Deaths` = as.integer(`Total Deaths`),
+    `Pneumonia Deaths` = as.integer(`Pneumonia Deaths`),
+    `Pneumonia and COVID-19 Deaths` = as.integer(`Pneumonia and COVID-19 Deaths`),
+    `Influenza Deaths` = as.integer(`Influenza Deaths`),
+    `Pneumonia, Influenza, or COVID-19 Deaths` = as.integer(`Pneumonia, Influenza, or COVID-19 Deaths`)
+         )
+
+# review
+glimpse(df)
+
+```
+
+```{r}
+View(df)
+```
+
+```{r}
+df_heatm <- df %>%
+  select(Sex, State, `Age group`, `COVID-19 Deaths`,
+         `Pneumonia Deaths`, `Pneumonia and COVID-19 Deaths`, 
+         `Pneumonia, Influenza, or COVID-19 Deaths`, `Influenza Deaths`) %>%
+  filter(Sex != 'NA') %>%
+  filter(State != 'NA') %>%
+  filter(`Age group` != 'NA') %>%
+  filter(`COVID-19 Deaths` != 'NA') %>%
+  filter(`Influenza Deaths` != 'NA') %>%
+  filter(`Pneumonia Deaths` != 'NA') %>%
+  filter(`Pneumonia and COVID-19 Deaths` != 'NA') %>%
+  filter(`Pneumonia, Influenza, or COVID-19 Deaths` != 'NA')
+  
+head(df_heatm)
+```
+
+
+```{r}
+df_heatm_gath <- df_heatm %>%
+  select_if(is.integer, ) %>%
+  gather()
+
+head(df_heatm_gath)
+```
+
+```{r}
+
+
+
+
+ds <- melt(df_heatm, id = c("State", "Sex", "Age group", "COVID-19 Deaths", "Pneumonia Deaths",
+                          "Pneumonia and COVID-19 Deaths", "Pneumonia, Influenza, or COVID-19 Deaths", 
+                          "Influenza Deaths"))
+head(ds)
+
+ds$State <- state.abb[match(ds$State, state.name)]
+head(ds)
+ds <- ds %>%
+  filter(State != 'NA') %>%
+  mutate(State = as.factor(State))
+
+ds
+
+m_data <- data.matrix(ds[, 4:ncol(ds)])
+
+# structure the new dataframe
+m_df <- data.frame(m_data)
+m_df
+df_structure <- m_df %>%
+  filter(Pneumonia.Deaths != 0) %>%
+  filter(COVID.19.Deaths != 0) %>%
+  filter(Pneumonia.and.COVID.19.Deaths != 0) %>%
+  filter(Pneumonia..Influenza..or.COVID.19.Deaths != 0) %>%
+  filter(Influenza.Deaths != 0)
+
+head(df_structure)
+
+# export of data for visualize in app shiny.
+write.csv(df_structure, "data.csv")
+```
+
+
+
+
+

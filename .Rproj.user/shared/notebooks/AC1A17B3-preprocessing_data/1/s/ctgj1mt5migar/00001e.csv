@@ -1,0 +1,6 @@
+"0","write.csv(df_structure, ""/home/anthonyservita/Documents/data.csv"")
+"
+"2","no fue posible abrir el archivo '/home/anthonyservita/Documents/data.csv': Not a directory"
+"2","Error in file(file, ifelse(append, ""a"", ""w"")) : 
+  no se puede abrir la conexión
+"

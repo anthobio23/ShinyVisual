@@ -1,0 +1,5 @@
+"0","count(na.action(df))
+"
+"2","Error in UseMethod(""count"") : 
+  no applicable method for 'count' applied to an object of class ""NULL""
+"
