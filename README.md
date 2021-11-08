@@ -2,7 +2,7 @@
 data visualization application in R. 
 the project has two databases referring to COVID19
 
-##Instruction:
+## Instruction:
 
 first you run  global.R
 
